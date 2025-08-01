@@ -7,154 +7,75 @@ var playBtn = document.getElementById("play");
 var geoGuessr = document.getElementById("geoGuessr");
 var phBtn = document.getElementById("phBtn");
 var worldBtn = document.getElementById("worldBtn");
-audioBtn = document.getElementById("audio-button");
-audioCollect = document.getElementById("audio-collect");
-audios = document.querySelectorAll("audio");
+var audioBtn = document.getElementById("audio-button");
+var audioCollect = document.getElementById("audio-collect");
+var audios = document.querySelectorAll("audio");
+
 function clickPlay() {
   menu_cat.style.display = "flex";
-
   menu_cat.style.transform = "translateY(0px)";
   init_menu.style.transition = "1s ease";
   init_menu.style.display = "none";
 }
+
+function loadGoogleMapsAPI(callbackName) {
+  // Prevent double loading
+  if (window.google && window.google.maps) {
+    if (typeof window[callbackName] === "function") window[callbackName]();
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = "./src/js/mapsJavaScriptAPI.js;
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+}
+
 function world() {
-  var googleAPI;
-  var getLoc;
-  var mechanics;
   menu.style.display = "none";
   game.style.display = "block";
-  googleAPI = document.createElement("script");
-  googleAPI.src = "./src/js/mapsJavaScriptAPI.js";
-  googleAPI.async = true;
-  googleAPI.defer = true;
-  document.documentElement.lastChild.appendChild(googleAPI);
 
-  getLoc = document.createElement("script");
+  const getLoc = document.createElement("script");
   getLoc.src = "./src/js/maps/randomWorld.js";
-  document.documentElement.lastChild.appendChild(getLoc);
+  document.head.appendChild(getLoc);
 
-  mechanics = document.createElement("script");
+  const mechanics = document.createElement("script");
   mechanics.src = "./src/js/hide.js";
+  document.head.appendChild(mechanics);
 
-  document.documentElement.firstChild.appendChild(mechanics);
+  loadGoogleMapsAPI("initMap");
 }
+
 function ph() {
-  var googleAPI;
-  var getLoc;
-  var mechanics;
   menu.style.display = "none";
   game.style.display = "block";
-  googleAPI = document.createElement("script");
-  googleAPI.src = "./src/js/mapsJavaScriptAPI.js";
-  googleAPI.async = true;
-  googleAPI.defer = true;
-  document.documentElement.lastChild.appendChild(googleAPI);
 
-  getLoc = document.createElement("script");
+  const getLoc = document.createElement("script");
   getLoc.src = "./src/js/maps/phLandmarks.js";
-  document.documentElement.lastChild.appendChild(getLoc);
+  document.head.appendChild(getLoc);
 
-  mechanics = document.createElement("script");
+  const mechanics = document.createElement("script");
   mechanics.src = "./src/js/hide.js";
+  document.head.appendChild(mechanics);
 
-  document.documentElement.firstChild.appendChild(mechanics);
+  loadGoogleMapsAPI("initMap");
 }
-playBtn.addEventListener(
-  "mouseover",
-  function () {
-    audioBtn.play();
-  },
-  false
-);
 
-playBtn.addEventListener(
-  "mouseleave",
-  function () {
+// SOUND EFFECTS
+function addHoverAudio(target) {
+  target.addEventListener("mouseover", () => audioBtn.play());
+  target.addEventListener("mouseleave", () => {
     audioBtn.pause();
     audioBtn.currentTime = 0;
-  },
-  false
-);
+  });
+}
 
-playBtn.addEventListener(
-  "click",
-  function () {
-    audioCollect.play();
-  },
-  false
-);
+function addClickAudio(target) {
+  target.addEventListener("click", () => audioCollect.play());
+}
 
-geoGuessr.addEventListener(
-  "mouseover",
-  function () {
-    audioBtn.play();
-  },
-  false
-);
-
-geoGuessr.addEventListener(
-  "mouseleave",
-  function () {
-    audioBtn.pause();
-    audioBtn.currentTime = 0;
-  },
-  false
-);
-geoGuessr.addEventListener(
-  "click",
-  function () {
-    audioCollect.play();
-  },
-  false
-);
-
-// MENU CATEGORY AUDIO
-
-phBtn.addEventListener(
-  "mouseover",
-  function () {
-    audioBtn.play();
-  },
-  false
-);
-
-phBtn.addEventListener(
-  "mouseleave",
-  function () {
-    audioBtn.pause();
-    audioBtn.currentTime = 0;
-  },
-  false
-);
-
-phBtn.addEventListener(
-  "click",
-  function () {
-    audioCollect.play();
-  },
-  false
-);
-
-worldBtn.addEventListener(
-  "mouseover",
-  function () {
-    audioBtn.play();
-  },
-  false
-);
-
-worldBtn.addEventListener(
-  "mouseleave",
-  function () {
-    audioBtn.pause();
-    audioBtn.currentTime = 0;
-  },
-  false
-);
-worldBtn.addEventListener(
-  "click",
-  function () {
-    audioCollect.play();
-  },
-  false
-);
+[playBtn, geoGuessr, phBtn, worldBtn].forEach((btn) => {
+  addHoverAudio(btn);
+  addClickAudio(btn);
+});
